@@ -1,3 +1,4 @@
+import 'symbol-observable'
 export interface IObservable<T, E> {
   // Subscribes to the sequence with an observer
   subscribe(observer: IObserver<T, E>): ISubscription
@@ -9,8 +10,7 @@ export interface IObservable<T, E> {
     onComplete?: () => void
   ): ISubscription
 
-  // Returns itself
-  // [Symbol.Observable]: IObservable<T, E>
+  [Symbol.observable](): IObservable<T, E>
 }
 
 export interface ISubscription {
@@ -52,3 +52,9 @@ export interface IObserver<T, E> {
 //   // A boolean value indicating whether the subscription is closed
 //   closed: boolean
 // }
+
+export type ObservableLike<T, E> = {
+  [Symbol.observable](): T | IObservable<T, E>
+}
+
+export type ObservableObject<T, E = any> = Iterable<T> | ObservableLike<T, E>

@@ -32,7 +32,7 @@ describe('Observable', () => {
         someGlobalObj['o'] = undefined
       }
     })
-    let values: number[] = []
+    const values: number[] = []
     const subscription = o.subscribe(value => {
       values.push(value)
     })
@@ -40,5 +40,14 @@ describe('Observable', () => {
     expect(someGlobalObj['o']).toEqual('existed')
     subscription.unsubscribe()
     expect(someGlobalObj['o']).toEqual(undefined)
+  })
+
+  it('creates an observable using `of`', () => {
+    const o = Observable.of('i', 'am', 'idiot')
+    const values: string[] = []
+    o.subscribe(value => {
+      values.push(value)
+    })
+    expect(values).toEqual(['i', 'am', 'idiot'])
   })
 })
