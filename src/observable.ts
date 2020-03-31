@@ -10,18 +10,18 @@ export class Observable<T, E = any> implements IObservable<T, E> {
   constructor(private func: SubscriberFunction<T, E>) {}
 
   subscribe(
-    observerOrNextFunc: IObserver<T, E> | ((value: T) => void),
+    observerOrNext: IObserver<T, E> | ((value: T) => void),
     onError?: (errorValue: E) => void,
     onComplete?: () => void
   ): ISubscription {
-    if (typeof observerOrNextFunc === 'object') {
-      const cleanup = this.func(observerOrNextFunc)
+    if (typeof observerOrNext === 'object') {
+      const cleanup = this.func(observerOrNext)
       return new Subscription(toCleanUp(cleanup))
     }
     const error = onError ? onError : () => {}
     const complete = onComplete ? onComplete : () => {}
     const observer: IObserver<T, E> = {
-      next: observerOrNextFunc,
+      next: observerOrNext,
       error,
       complete,
     }
