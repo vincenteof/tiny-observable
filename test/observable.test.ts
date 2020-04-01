@@ -50,4 +50,30 @@ describe('Observable', () => {
     })
     expect(values).toEqual(['i', 'am', 'idiot'])
   })
+
+  it('creates an observable from iterable using `from`', () => {
+    const o = Observable.from(['i', 'am', 'idiot'])
+    const values: string[] = []
+    o.subscribe(value => {
+      values.push(value)
+    })
+    expect(values).toEqual(['i', 'am', 'idiot'])
+  })
+
+  it('creates an observable from observable using `from`', () => {
+    const o = Observable.from({
+      [Symbol.observable]() {
+        return new Observable<string>(observer => {
+          observer.next('hello')
+          observer.next('world')
+          observer.complete()
+        })
+      },
+    })
+    const values: string[] = []
+    o.subscribe(value => {
+      values.push(value)
+    })
+    expect(values).toEqual(['hello', 'world'])
+  })
 })

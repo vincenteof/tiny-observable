@@ -6,7 +6,7 @@ import {
   ObservableObject,
 } from './types'
 import 'symbol-observable'
-import { toCleanUp, isIterable, isObservableLike } from './util'
+import { toCleanUp, isIterable, isIObservable } from './util'
 
 export class Observable<T, E = any> implements IObservable<T, E> {
   constructor(private func: SubscriberFunction<T, E>) {}
@@ -32,7 +32,7 @@ export class Observable<T, E = any> implements IObservable<T, E> {
 
   // `Observable.of` creates an Observable of the values provided as arguments.
   // The values are delivered synchronously when `subscribe` is called.
-  static of<V>(...values: V[]) {
+  static of<V>(...values: V[]): IObservable<V, any> {
     return new Observable<V>(observer => {
       values.forEach(value => {
         observer.next(value)
@@ -45,7 +45,7 @@ export class Observable<T, E = any> implements IObservable<T, E> {
   // 1. If the argument has a `Symbol.observable` method, then it returns the result of invoking that method.
   //    If the resulting object is not an instance of Observable, then it is wrapped in an Observable which will delegate subscription.
   // 2. Otherwise, the argument is assumed to be an iterable and the iteration values are delivered synchronously when subscribe is called.
-  static from<V>(obj: ObservableObject<V>) {
+  static from<V>(obj: ObservableObject<V>): IObservable<V, any> {
     if (isIterable<V>(obj)) {
       return new Observable<V>(observer => {
         const iterator = obj[Symbol.iterator]()
@@ -58,12 +58,14 @@ export class Observable<T, E = any> implements IObservable<T, E> {
       })
     }
 
-    if (isObservableLike<V>(obj)) {
-      return obj[Symbol.observable]()
+    const observableLike = obj[Symbol.observable]()
+
+    if (isIObservable<V>(observableLike)) {
+      return observableLike
     }
 
     return new Observable<V>(observer => {
-      observer.next(obj[Symbol.observable])
+      observer.next(observableLike)
     })
   }
 
