@@ -76,4 +76,17 @@ describe('Observable', () => {
     })
     expect(values).toEqual(['hello', 'world'])
   })
+
+  it('creates an observable from fake observable using `from`', () => {
+    const o = Observable.from({
+      [Symbol.observable]() {
+        return 'fake'
+      },
+    })
+    const values: string[] = []
+    o.subscribe(value => {
+      values.push(value)
+    })
+    expect(values).toEqual(['fake'])
+  })
 })
