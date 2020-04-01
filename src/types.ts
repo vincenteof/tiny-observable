@@ -11,6 +11,10 @@ export interface IObservable<T, E> {
   ): ISubscription
 
   [Symbol.observable](): IObservable<T, E>
+
+  // todo:
+  // map<U>(f: (value: T) => U): IObservable<U, E>
+  // filter(predicate: (value: T) => boolean): IObservable<T, E>
 }
 
 export interface ISubscription {
